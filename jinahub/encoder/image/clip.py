@@ -1,3 +1,5 @@
+from typing import Optional
+
 import numpy as np
 import torch
 from jina import Executor, DocumentArray, requests
@@ -24,15 +26,16 @@ class CLIPImageEncoder(Executor):
         self.model = model
 
     @requests
-    def encode(self, docs: DocumentArray, parameters, **kwargs):
+    def encode(self, docs: Optional[DocumentArray], parameters, **kwargs):
         """
         Encode all docs with images and store the encodings in the embedding attribute of the docs.
         :param docs: documents sent to the encoder
         :param parameters: dictionary to define the traversal_
         :param kwargs:
         """
-        document_batches_generator = self._get_batches(docs, parameters)
-        self._create_embeddings(document_batches_generator)
+        if docs:
+            document_batches_generator = self._get_batches(docs, parameters)
+            self._create_embeddings(document_batches_generator)
 
     def _get_batches(self, docs, parameters):
         traversal_path = parameters.get('traversal_path', self.default_traversal_path)
