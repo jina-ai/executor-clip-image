@@ -1,2 +1,3 @@
 torch==1.7.1
 clip @ git+https://github.com/openai/CLIP.git
+jina==2.0.0rc5.dev54
