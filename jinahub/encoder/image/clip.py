@@ -7,9 +7,11 @@ from jina import Executor, DocumentArray, requests
 class CLIPImageEncoder(Executor):
     """Encode image into embeddings."""
 
-    def __init__(self, model_name: str = 'ViT-B/32', *args, **kwargs):
+    def __init__(self, model_name: str = 'ViT-B/32', device=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        model, _ = clip.load(model_name, 'cpu')
+        if not device:
+            device = "cuda" if not device and torch.cuda.is_available() else "cpu"
+        model, _ = clip.load(model_name, device)
         self.model = model
 
     @requests
