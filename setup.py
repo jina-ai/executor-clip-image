@@ -1,5 +1,5 @@
 import setuptools
-print('# open("requirements.txt").readlines()', open("requirements.txt").readlines())
+
 setuptools.setup(
     name="executor-clip",
     version="2.0",
