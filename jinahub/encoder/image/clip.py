@@ -7,9 +7,15 @@ from jina import Executor, DocumentArray, requests
 import clip
 
 
-def _batch_generator(sequence, batch_size):
-    for i in range(0, len(sequence), batch_size):
-        yield sequence[i:i + batch_size]
+def _batch_generator(generator, batch_size):
+    current_batch = []
+    for item in generator:
+        current_batch.append(item)
+        if len(current_batch) == batch_size:
+            yield current_batch
+            current_batch = []
+    if current_batch:
+        yield current_batch
 
 
 class CLIPImageEncoder(Executor):
@@ -63,15 +69,14 @@ class CLIPImageEncoder(Executor):
         flat_docs = docs.traverse_flat(traversal_path)
 
         # filter out documents without images
-        filtered_docs = DocumentArray(doc for doc in flat_docs if doc.blob is not None)
+        filtered_docs = (doc for doc in flat_docs if doc.blob is not None)
 
-        document_batches_generator = _batch_generator(filtered_docs, batch_size)
-        return document_batches_generator
+        return _batch_generator(filtered_docs, batch_size)
 
     def _create_embeddings(self, document_batches_generator):
         with torch.no_grad():
             for document_batch in document_batches_generator:
-                blob_batch = document_batch.get_attributes('blob')
+                blob_batch = DocumentArray(document_batch).get_attributes('blob')
                 if self.channel_axis != 0:
                     blob_batch = [np.moveaxis(blob, self.channel_axis, 0) for blob in blob_batch]
                 tensor = torch.from_numpy(np.array(blob_batch))
