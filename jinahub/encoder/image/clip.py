@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Iterable, Dict
 
 import numpy as np
 import torch
@@ -7,7 +7,7 @@ from jina import Executor, DocumentArray, requests
 import clip
 
 
-def _batch_generator(generator, batch_size):
+def _batch_generator(generator: Iterable, batch_size: int):
     current_batch = []
     for item in generator:
         current_batch.append(item)
@@ -50,7 +50,7 @@ class CLIPImageEncoder(Executor):
         self.model = model
 
     @requests
-    def encode(self, docs: Optional[DocumentArray], parameters, **kwargs):
+    def encode(self, docs: Optional[DocumentArray], parameters: dict, **kwargs):
         """
         Encode all docs with images and store the encodings in the embedding attribute of the docs.
         :param docs: documents sent to the encoder
@@ -58,10 +58,10 @@ class CLIPImageEncoder(Executor):
         :param kwargs:
         """
         if docs:
-            document_batches_generator = self._get_batches(docs, parameters)
+            document_batches_generator = self._get_input_data(docs, parameters)
             self._create_embeddings(document_batches_generator)
 
-    def _get_batches(self, docs, parameters):
+    def _get_input_data(self, docs: DocumentArray, parameters: dict):
         traversal_path = parameters.get('traversal_path', self.default_traversal_path)
         batch_size = parameters.get('batch_size', self.default_batch_size)
 
@@ -73,7 +73,7 @@ class CLIPImageEncoder(Executor):
 
         return _batch_generator(filtered_docs, batch_size)
 
-    def _create_embeddings(self, document_batches_generator):
+    def _create_embeddings(self, document_batches_generator: Iterable):
         with torch.no_grad():
             for document_batch in document_batches_generator:
                 blob_batch = DocumentArray(document_batch).get_attributes('blob')
