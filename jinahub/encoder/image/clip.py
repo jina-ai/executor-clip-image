@@ -37,7 +37,6 @@ class CLIPImageEncoder(Executor):
             default_batch_size: int = 32,
             default_traversal_path: str = 'r',
             jit: bool = True,
-            channel_axis: int = 0,
             *args, **kwargs
     ):
         super().__init__(*args, **kwargs)
@@ -45,7 +44,6 @@ class CLIPImageEncoder(Executor):
             device = 'cuda' if not device and torch.cuda.is_available() else 'cpu'
         self.default_batch_size = default_batch_size
         self.default_traversal_path = default_traversal_path
-        self.channel_axis = channel_axis
         model, _ = clip.load(model_name, device, jit)
         self.model = model
 
@@ -77,8 +75,6 @@ class CLIPImageEncoder(Executor):
         with torch.no_grad():
             for document_batch in document_batches_generator:
                 blob_batch = DocumentArray(document_batch).get_attributes('blob')
-                if self.channel_axis != 0:
-                    blob_batch = [np.moveaxis(blob, self.channel_axis, 0) for blob in blob_batch]
                 tensor = torch.from_numpy(np.array(blob_batch))
                 embedding_batch = self.model.encode_image(tensor)
                 numpy_embedding_batch = embedding_batch.cpu().numpy()
