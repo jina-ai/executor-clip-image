@@ -1,23 +1,33 @@
 # ClipImageEncoder
 
- **CliipImageEncoder** is a class that wraps the image embedding functionality from the **CLIP** model.
+ **ClipImageEncoder** is a class that wraps the image embedding functionality from the **CLIP** model.
 
-The **CLIP** model was originally proposed in  [Learning Transferable Visual Models From Natural Language Supervision](https://cdn.openai.com/papers/Learning_Transferable_Visual_Models_From_Natural_Language_Supervision.pdf).
+The **CLIP** model originally was proposed in [Learning Transferable Visual Models From Natural Language Supervision](https://cdn.openai.com/papers/Learning_Transferable_Visual_Models_From_Natural_Language_Supervision.pdf).
 
-`ClipImageEncoder` encodes data from a `np.ndarray` of floats and returns a `np.ndarray` of floats.
+`ClipImageEncoder` encode images stored in the blob attribute of the **Document** and saves the encoding in the embedding attribute.
 
-- Input shape: `BatchSize x (Channel x Height x Width)`
+- Input shape: `Color Channel x Height x Width)`
 
-- Output shape: `BatchSize x EmbeddingDimension`
+- Output shape: `EmbeddingDimension`
 
       
 
-## Encode with the encoder:
+## Example:
 
-The following example shows how to generate output embeddings given an input `np.ndarray` containing images.
+Here is an example usage of the clip encoder.
 
 ```python
-# Encoder embedding 
-encoder = CLIPImageEncoder()
-embeddeding_batch_np = encoder.encode(batch_of_images)    
+    def process_response(resp):
+        ...
+
+    f = Flow().add(uses={
+        'jtype': CLIPImageEncoder.__name__,
+        'with': {
+            'default_batch_size': 32,
+            'model_name': 'ViT-B/32',
+            'device': 'cpu'
+        }
+    })
+    with f:
+        f.post(on='/test', inputs=(Document(blob=np.ones((3, 224, 224))) for _ in range(25)), on_done=process_response)
 ```
