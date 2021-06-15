@@ -45,7 +45,7 @@ class CLIPImageEncoder(Executor):
         """
         Encode all docs with images and store the encodings in the embedding attribute of the docs.
         :param docs: documents sent to the encoder
-        :param parameters: dictionary to define the traversal_
+        :param parameters: dictionary to define the traversal_path and the batch_size
         :param kwargs:
         """
         if docs:
@@ -60,7 +60,7 @@ class CLIPImageEncoder(Executor):
         flat_docs = docs.traverse_flat(traversal_path)
 
         # filter out documents without images
-        filtered_docs = (doc for doc in flat_docs if doc.blob is not None)
+        filtered_docs = [doc for doc in flat_docs if doc.blob is not None]
 
         return _batch_generator(filtered_docs, batch_size)
 
