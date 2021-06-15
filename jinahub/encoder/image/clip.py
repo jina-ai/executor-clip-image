@@ -1,4 +1,5 @@
-from typing import Optional, Iterable, Dict
+from itertools import islice
+from typing import Optional, Iterable, Generator, Any
 
 import numpy as np
 import torch
@@ -7,15 +8,12 @@ from jina import Executor, DocumentArray, requests
 import clip
 
 
-def _batch_generator(generator: Iterable, batch_size: int):
-    current_batch = []
-    for item in generator:
-        current_batch.append(item)
-        if len(current_batch) == batch_size:
-            yield current_batch
-            current_batch = []
-    if current_batch:
-        yield current_batch
+def _batch_generator(generator: Generator[int, Any, None], size: int):
+    while True:
+        batch = list(islice(generator, size))
+        if not batch:
+            break
+        yield batch
 
 
 class CLIPImageEncoder(Executor):
@@ -33,7 +31,7 @@ class CLIPImageEncoder(Executor):
     def __init__(
             self,
             model_name: str = 'ViT-B/32',
-            device: str = None,
+            device: Optional[str] = None,
             default_batch_size: int = 32,
             default_traversal_path: str = 'r',
             jit: bool = True,
