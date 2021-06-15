@@ -8,7 +8,7 @@ from jina import Executor, DocumentArray, requests
 import clip
 
 
-def _batch_generator(generator: Generator[int, Any, None], size: int):
+def _batch_generator(generator: Generator[Any, Any, None], size: int):
     while True:
         batch = list(islice(generator, size))
         if not batch:
