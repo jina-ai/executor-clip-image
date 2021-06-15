@@ -23,7 +23,7 @@ class CLIPImageEncoder(Executor):
     Encode image into embeddings.
 
     :param model_name: use clip.available_models() to see all available models: ['RN50', 'RN101', 'RN50x4', 'ViT-B/32']
-    :param device: device to use for encoding
+    :param device: device to use for encoding ['cuda', 'cpu]
     :param default_batch_size: fallback batch size in case there is not batch size sent in the request
     :param default_traversal_path: fallback traversal path in case there is not traversal path sent in the request
     :param jit: Whether to load the optimized JIT model (default) or more hackable non-JIT model.
@@ -42,7 +42,7 @@ class CLIPImageEncoder(Executor):
     ):
         super().__init__(*args, **kwargs)
         if not device:
-            device = "cuda" if not device and torch.cuda.is_available() else "cpu"
+            device = 'cuda' if not device and torch.cuda.is_available() else 'cpu'
         self.default_batch_size = default_batch_size
         self.default_traversal_path = default_traversal_path
         self.channel_axis = channel_axis
