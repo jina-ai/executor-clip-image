@@ -12,7 +12,7 @@ RUN pip install -r requirements.txt
 RUN python -c "import clip;clip.load('ViT-B/32', 'cpu', True)"
 
 # for testing the image
-FROM BASE
+FROM base
 RUN pip install -r tests/requirements.txt
 RUN pytest -s -vv
 
