@@ -1,5 +1,4 @@
-from itertools import islice
-from typing import Optional, Iterable, Generator, Any
+from typing import Optional, Iterable, Any, List
 
 import numpy as np
 import torch
@@ -8,13 +7,9 @@ from jina import Executor, DocumentArray, requests
 import clip
 
 
-def _batch_generator(generator: Generator[Any, Any, None], size: int):
-    while True:
-        batch = list(islice(generator, size))
-        if not batch:
-            break
-        yield batch
-
+def _batch_generator(data: List[Any], batch_size: int):
+    for i in range(0, len(data), batch_size):
+        yield data[i:min(i + batch_size, len(data))]
 
 class CLIPImageEncoder(Executor):
     """
