@@ -16,5 +16,5 @@ FROM base
 RUN pip install -r tests/requirements.txt
 RUN pytest -s -vv
 
-FROM BASE
+FROM base
 ENTRYPOINT ["jina", "executor", "--uses", "config.yml"]
