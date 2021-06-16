@@ -1,4 +1,5 @@
 import operator
+import os
 from glob import glob
 
 import clip
@@ -8,6 +9,8 @@ from PIL import Image
 from jina import Flow, Document, DocumentArray
 
 from encoder_clip import CLIPImageEncoder
+
+cur_dir = os.path.dirname(os.path.abspath(__file__))
 
 
 def test_clip_any_image_shape():
@@ -95,9 +98,10 @@ def test_custom_processing():
     assert result2[0].docs[0].embedding is not None
     np.testing.assert_array_compare(operator.__ne__, result1[0].docs[0].embedding, result2[0].docs[0].embedding)
 
+
 def test_clip_data():
     docs = []
-    for file in glob('data/*'):
+    for file in glob(os.path.join(cur_dir, 'data', '*')):
         pil_image = Image.open(file)
         nd_image = np.array(pil_image)
         prepared_nd_image = np.moveaxis((nd_image / 255), -1, 0)
@@ -108,15 +112,15 @@ def test_clip_data():
 
     with f:
         results = f.post(on='/test', inputs=docs, return_results=True)
-        'data/banana2.png'
+        os.path.join(cur_dir, 'data', 'banana2.png')
         image_name_to_ndarray = {}
         for d in results[0].docs:
             image_name_to_ndarray[d.id] = d.embedding
 
     def dist(a, b):
         nonlocal image_name_to_ndarray
-        a_embedding = image_name_to_ndarray[f'data/{a}.png']
-        b_embedding = image_name_to_ndarray[f'data/{b}.png']
+        a_embedding = image_name_to_ndarray[os.path.join(cur_dir, 'data', f'{a}.png')]
+        b_embedding = image_name_to_ndarray[os.path.join(cur_dir, 'data', f'{b}.png')]
         return np.linalg.norm(a_embedding - b_embedding)
 
     # assert semantic meaning is captured in the encoding
