@@ -13,6 +13,6 @@ setuptools.setup(
     ],
     py_modules=['jinahub.encoder.image.clip'],
     packages=setuptools.find_packages(where='.', include=['jinahub.*']),
-    install_requires=open('requirements.txt').readlines(),
+    install_requires=open('jinahub/encoder/clip/requirements.txt').readlines(),
     python_requires='>=3.7',
 )
