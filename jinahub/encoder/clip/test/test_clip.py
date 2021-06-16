@@ -1,6 +1,6 @@
 from jina import Flow, Document, DocumentArray
 
-from jinahub.encoder.image.clip import CLIPImageEncoder
+from jinahub.encoder.clip.clip import CLIPImageEncoder
 import numpy as np
 
 

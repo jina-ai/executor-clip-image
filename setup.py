@@ -11,8 +11,8 @@ setuptools.setup(
         'Programming Language :: Python :: 3',
         'Operating System :: OS Independent',
     ],
-    py_modules=['jinahub.encoder.image.clip'],
+    py_modules=['jinahub.encoder.clip'],
     packages=setuptools.find_packages(where='.', include=['jinahub.*']),
-    install_requires=open('requirements.txt').readlines(),
+    install_requires=open('jinahub/encoder/clip/requirements.txt').readlines(),
     python_requires='>=3.7',
 )
