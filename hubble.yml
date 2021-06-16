@@ -1,0 +1,1 @@
+cache_dir: ~/.cache/clip # can be used to prevent downloading the model in case it exists already

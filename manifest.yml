@@ -1,0 +1,12 @@
+manifest_version: 1
+name: CLIPImageEncoder
+kind: encoder
+description: Encoder based on the Clip model proposed in https://cdn.openai.com/papers/Learning_Transferable_Visual_Models_From_Natural_Language_Supervision.pdf
+author: Jina AI Dev-Team (dev-team@jina.ai)
+url: https://jina.ai
+vendor: Jina AI Limited
+documentation: https://github.com/jina-ai/jina-hub
+version: 0.0.1
+license: apache-2.0
+keywords: [Clip, CLIPImageEncoder, encoder, image]
+type: executor
