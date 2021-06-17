@@ -12,11 +12,11 @@ COPY . /workspace
 WORKDIR /workspace
 
 # for testing the image
+# TODO: the following part is ignored in .dockerignore
 FROM base AS test
 RUN pip install -r tests/requirements.txt
 RUN pip install .
 RUN pytest -s -vv
 
 FROM base
-RUN rm -rf tests/
 ENTRYPOINT ["jina", "executor", "--uses", "config.yml"]

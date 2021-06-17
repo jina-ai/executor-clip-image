@@ -2,5 +2,6 @@
 .venv
 .github
 .pytest_cache
+tests
 __pycache__
 scripts
