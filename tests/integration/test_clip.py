@@ -141,3 +141,10 @@ def test_clip_data():
             expected_embedding = model.encode_image(image).numpy()[0]
 
         np.testing.assert_almost_equal(actual_embedding, expected_embedding, 5)
+
+
+def test_no_documents():
+    f = Flow().add(uses=CLIPImageEncoder)
+    with f:
+        results = f.post(on='/test', inputs=[], return_results=True)
+        assert results[0].status.code == 0  # SUCCESS
