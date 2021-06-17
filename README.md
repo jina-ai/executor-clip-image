@@ -23,92 +23,102 @@ Document, Executor, and Flow are the three fundamental concepts in Jina.
 
 ## Usage
 
-### Via Pypi
+### Via Jinahub
 
-1. Install the `jinahub-clip-image` by `pip install git+https://github.com/jina-ai/executor-clip-image.git`
-2. Use `jinahub-clip-image` in your code
+1. Clone the repo and build the Jinahub image
 
-```python
-from jinahub.encoder.clip_image import ClipImageEncoder
-from jina import Flow, Document
-import numpy as np
+	```shell
+	git clone https://github.com/jina-ai/executor-clip-image.git
+	cd executor-clip-image
+	jina hub push .
+	```
 
-f = Flow().add(uses=ClipImageEncoder)
+1. Use the image in your codes
 
-def check_emb(resp):
-    for doc in resp.data.docs:
-        if doc.emb:
-            assert doc.emb.shape == (512,)
-
-with f:
-	f.post(
-	    on='/foo', 
-	    inputs=Document(np.random.random((224, 224, 3))), 
-	    on_done=check_emb)
-```
-
+	```python
+	from jinahub.encoder.clip_image import ClipImageEncoder
+	from jina import Flow, Document
+	import numpy as np
+	
+	f = Flow().add(
+	        uses=jinahub+docker://xgdfljc:v1,
+	        volumes='/your_home_folder/.cache/clip:/root/.cache/clip')
+	
+	def check_emb(resp):
+	    for doc in resp.data.docs:
+	        if doc.emb:
+	            assert doc.emb.shape == (512,)
+	
+	with f:
+		f.post(
+		    on='/foo', 
+		    inputs=Document(np.random.random((224, 224, 3))), 
+		    on_done=check_emb)
+	```
 
 
 ### Via Docker
 
 1. Clone the repo and build the docker image
 
-```shell
-git clone https://github.com/jina-ai/executor-clip-image.git
-cd executor-clip-image
-docker build -t jinahub-clip-image .
-```
+	```shell
+	git clone https://github.com/jina-ai/executor-clip-image.git
+	cd executor-clip-image
+	docker build -t jinahub-clip-image .
+	```
 
 1. Use `jinahub-clip-image` in your codes
 
-```python
-from jinahub.encoder.clip_image import ClipImageEncoder
-from jina import Flow, Document
-import numpy as np
+	```python
+	from jinahub.encoder.clip_image import ClipImageEncoder
+	from jina import Flow, Document
+	import numpy as np
+	
+	f = Flow().add(
+	        uses=docker://jinahub-clip-image:latest,
+	        volumes='/your_home_folder/.cache/clip:/root/.cache/clip')
+	
+	def check_emb(resp):
+	    for doc in resp.data.docs:
+	        if doc.emb:
+	            assert doc.emb.shape == (512,)
+	
+	with f:
+		f.post(
+		    on='/foo', 
+		    inputs=Document(np.random.random((224, 224, 3))), 
+		    on_done=check_emb)
+	```
 
-f = Flow().add(uses=docker://jinahub-clip-image:latest)
+### Via Pypi
 
-def check_emb(resp):
-    for doc in resp.data.docs:
-        if doc.emb:
-            assert doc.emb.shape == (512,)
+1. Install the `jinahub-clip-image`
 
-with f:
-	f.post(
-	    on='/foo', 
-	    inputs=Document(np.random.random((224, 224, 3))), 
-	    on_done=check_emb)
-```
+	```bash
+	pip install git+https://github.com/jina-ai/executor-clip-image.git
+	```
+2. Use `jinahub-clip-image` in your code
 
-### Via Jinahub
+	```python
+	from jinahub.encoder.clip_image import ClipImageEncoder
+	from jina import Flow, Document
+	import numpy as np
+	
+	f = Flow().add(uses=ClipImageEncoder)
+	
+	def check_emb(resp):
+	    for doc in resp.data.docs:
+	        if doc.emb:
+	            assert doc.emb.shape == (512,)
+	
+	with f:
+		f.post(
+		    on='/foo', 
+		    inputs=Document(np.random.random((224, 224, 3))), 
+		    on_done=check_emb)
+	```
 
-1. Clone the repo and build the Jinahub image
-```shell
-git clone https://github.com/jina-ai/executor-clip-image.git
-cd executor-clip-image
-jina hub push .
-```
 
-1. Use the image in your codes
-
-```python
-from jinahub.encoder.clip_image import ClipImageEncoder
-from jina import Flow, Document
-import numpy as np
-
-f = Flow().add(uses=jinahub+docker://xgdfljc:v1)
-
-def check_emb(resp):
-    for doc in resp.data.docs:
-        if doc.emb:
-            assert doc.emb.shape == (512,)
-
-with f:
-	f.post(
-	    on='/foo', 
-	    inputs=Document(np.random.random((224, 224, 3))), 
-	    on_done=check_emb)
-```
 
 ## Parameters
 
