@@ -4,30 +4,117 @@
 
 The **CLIP** model originally was proposed in [Learning Transferable Visual Models From Natural Language Supervision](https://cdn.openai.com/papers/Learning_Transferable_Visual_Models_From_Natural_Language_Supervision.pdf).
 
-`ClipImageEncoder` encode images stored in the blob attribute of the **Document** and saves the encoding in the embedding attribute.
+`ClipImageEncoder` encode images stored in the blob attribute of the [**Document**](https://github.com/jina-ai/jina/blob/master/.github/2.0/cookbooks/Document.md) and saves the encoding in the embedding attribute.
 
 - Input shape: ndarray `Height x Width x Color Channel`, min=0, max=1. If `use_default_preprocessing` is `true`, input images can have any height and width. Otherwise, the input format has to be 224x224x3.
 
 - Output shape: `EmbeddingDimension`
 
-      
+## Prerequisite
 
-## Example:
+Document, Executor, and Flow are the three fundamental concepts in Jina.
 
-Here is an example usage of the clip encoder.
+- [**Document**](https://github.com/jina-ai/jina/blob/master/.github/2.0/cookbooks/Document.md) is the basic data type in Jina;
+- [**Executor**](https://github.com/jina-ai/jina/blob/master/.github/2.0/cookbooks/Executor.md) is how Jina processes Documents;
+- [**Flow**](https://github.com/jina-ai/jina/blob/master/.github/2.0/cookbooks/Flow.md) is how Jina streamlines and scales Executors.
+
+*Learn them all, nothing more, you are good to go.*
+
+
+## Usage
+
+### Via Pypi
+
+1. Install the `jinahub-clip-image` by `pip install git+https://github.com/jina-ai/executor-clip-image.git`
+2. Use `jinahub-clip-image` in your code
 
 ```python
-    def process_response(resp):
-        ...
+from jinahub.encoder.clip_image import ClipImageEncoder
+from jina import Flow, Document
+import numpy as np
 
-    f = Flow().add(uses={
-        'jtype': CLIPImageEncoder.__name__,
-        'with': {
-            'default_batch_size': 32,
-            'model_name': 'ViT-B/32',
-            'device': 'cpu'
-        }
-    })
-    with f:
-        f.post(on='/test', inputs=(Document(blob=np.ones((224, 224, 3))) for _ in range(25)), on_done=process_response)
+f = Flow().add(uses=ClipImageEncoder)
+
+def check_emb(resp):
+    for doc in resp.data.docs:
+        if doc.emb:
+            assert doc.emb.shape == (512,)
+
+with f:
+	f.post(
+	    on='/foo', 
+	    inputs=Document(np.random.random((224, 224, 3))), 
+	    on_done=check_emb)
 ```
+
+
+
+### Via Docker
+
+1. Clone the repo and build the docker image
+
+```shell
+git clone https://github.com/jina-ai/executor-clip-image.git
+cd executor-clip-image
+docker build -t jinahub-clip-image .
+```
+
+1. Use `jinahub-clip-image` in your codes
+
+```python
+from jinahub.encoder.clip_image import ClipImageEncoder
+from jina import Flow, Document
+import numpy as np
+
+f = Flow().add(uses=docker://jinahub-clip-image:latest)
+
+def check_emb(resp):
+    for doc in resp.data.docs:
+        if doc.emb:
+            assert doc.emb.shape == (512,)
+
+with f:
+	f.post(
+	    on='/foo', 
+	    inputs=Document(np.random.random((224, 224, 3))), 
+	    on_done=check_emb)
+```
+
+### Via Jinahub
+
+1. Clone the repo and build the Jinahub image
+```shell
+git clone https://github.com/jina-ai/executor-clip-image.git
+cd executor-clip-image
+jina hub push .
+```
+
+1. Use the image in your codes
+
+```python
+from jinahub.encoder.clip_image import ClipImageEncoder
+from jina import Flow, Document
+import numpy as np
+
+f = Flow().add(uses=jinahub+docker://xgdfljc:v1)
+
+def check_emb(resp):
+    for doc in resp.data.docs:
+        if doc.emb:
+            assert doc.emb.shape == (512,)
+
+with f:
+	f.post(
+	    on='/foo', 
+	    inputs=Document(np.random.random((224, 224, 3))), 
+	    on_done=check_emb)
+```
+
+## Parameters
+
+Generate docs here?
+
+## Reference
+- https://cdn.openai.com/papers/Learning_Transferable_Visual_Models_From_Natural_Language_Supervision.pdf
+- https://github.com/openai/CLIP
+

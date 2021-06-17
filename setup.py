@@ -1,7 +1,7 @@
 import setuptools
 
 setuptools.setup(
-    name='jinahub-clip',
+    name='jinahub-clip-image',
     version='1',
     author='Jina Dev Team',
     author_email='dev-team@jina.ai',
