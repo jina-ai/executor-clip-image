@@ -10,8 +10,6 @@ from jina import Flow, Document, DocumentArray, requests
 from jina.executors import BaseExecutor
 from jinahub.encoder.clip_image import CLIPImageEncoder
 
-from clip_image import CLIPImageEncoder
-
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 
 
