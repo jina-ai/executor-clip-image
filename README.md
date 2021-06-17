@@ -6,7 +6,7 @@ The **CLIP** model originally was proposed in [Learning Transferable Visual Mode
 
 `ClipImageEncoder` encode images stored in the blob attribute of the **Document** and saves the encoding in the embedding attribute.
 
-- Input shape: ndarray `Height x Width x Color Channel`, min=0, max=1. If `use_default_preprocessing` is `true`, input images can have any height and width. Otherwise, the input format has to be 224x224x3.
+- Input: ndarray `Height x Width x Color Channel`. If `use_default_preprocessing` is `true`, input images can have any height and width and dtype uint8. Otherwise, the input format has to be 224x224x3 with dtype=float32.
 
 - Output shape: `EmbeddingDimension`
 

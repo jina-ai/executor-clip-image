@@ -74,11 +74,7 @@ class CLIPImageEncoder(Executor):
             for document_batch in document_batches_generator:
                 blob_batch = [d.blob for d in document_batch]
                 if self.use_default_preprocessing:
-                    images = [
-                        Image.fromarray(
-                            np.uint8(blob * 255)
-                        ) for blob in blob_batch
-                    ]
+                    images = [Image.fromarray(blob) for blob in blob_batch]
                     tensors = [self.preprocess(img) for img in images]
                     tensor = torch.stack(tensors)
                 else:
