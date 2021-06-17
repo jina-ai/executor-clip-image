@@ -6,9 +6,7 @@ The **CLIP** model originally was proposed in [Learning Transferable Visual Mode
 
 `ClipImageEncoder` encode images stored in the blob attribute of the [**Document**](https://github.com/jina-ai/jina/blob/master/.github/2.0/cookbooks/Document.md) and saves the encoding in the embedding attribute.
 
-- Input shape: ndarray `Height x Width x Color Channel`, min=0, max=1. If `use_default_preprocessing` is `true`, input images can have any height and width. Otherwise, the input format has to be 224x224x3.
 
-- Output shape: `EmbeddingDimension`
 
 ## Prerequisite
 
@@ -122,7 +120,17 @@ Document, Executor, and Flow are the three fundamental concepts in Jina.
 
 ## Parameters
 
-Generate docs here?
+### Inputs 
+
+An ndarray of the shape `Height x Width x Color Channel`, min=0, max=1. If `use_default_preprocessing` is `true`, input images can have any height and width. Otherwise, the input format has to be 224x224x3.
+
+### Outputs
+
+Write the output ndarray of the shape `EmbeddingDimension` into `Document.embedding` field.
+
+
+__*We might need to generate docs automatically?*__
+
 
 ## Reference
 - https://cdn.openai.com/papers/Learning_Transferable_Visual_Models_From_Natural_Language_Supervision.pdf
