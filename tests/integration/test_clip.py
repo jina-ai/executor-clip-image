@@ -7,6 +7,7 @@ import numpy as np
 import torch
 from PIL import Image
 from jina import Flow, Document, DocumentArray, requests
+from jina.executors import BaseExecutor
 from jinahub.encoder.clip_image import CLIPImageEncoder
 
 from clip_image import CLIPImageEncoder
