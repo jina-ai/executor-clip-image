@@ -40,10 +40,9 @@ class CLIPImageEncoder(Executor):
         self.device = device
         self.default_batch_size = default_batch_size
         self.default_traversal_path = default_traversal_path
-        model, preprocess = clip.load(model_name, device, jit)
-        self.model = model
+        self.model, self.preprocess = clip.load(model_name, device, jit)
         self.use_default_preprocessing = use_default_preprocessing
-        self.preprocess = preprocess
+
 
     @requests
     def encode(self, docs: Optional[DocumentArray], parameters: dict, **kwargs):
