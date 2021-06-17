@@ -7,7 +7,6 @@ import numpy as np
 import torch
 from PIL import Image
 from jina import Flow, Document, DocumentArray
-
 from jinahub.encoder.clip_image import CLIPImageEncoder
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
@@ -15,17 +14,17 @@ cur_dir = os.path.dirname(os.path.abspath(__file__))
 
 def test_clip_any_image_shape():
     def validate_callback(resp):
-        assert 1 == len(DocumentArray(resp.data.docs).get_attributes('embedding'))
+        assert 1 == len(resp.docs.get_attributes('embedding'))
 
     f = Flow().add(uses=CLIPImageEncoder)
     with f:
-        f.post(on='/test', inputs=[Document(blob=np.ones((3, 224, 224)))], on_done=validate_callback)
-        f.post(on='/test', inputs=[Document(blob=np.ones((3, 100, 100)))], on_done=validate_callback)
+        f.post(on='/test', inputs=[Document(blob=np.ones((224, 224, 3)))], on_done=validate_callback)
+        f.post(on='/test', inputs=[Document(blob=np.ones((100, 100, 3)))], on_done=validate_callback)
 
 
 def test_clip_batch():
     def validate_callback(resp):
-        assert 25 == len(DocumentArray(resp.data.docs).get_attributes('embedding'))
+        assert 25 == len(resp.docs.get_attributes('embedding'))
 
     f = Flow().add(uses={
         'jtype': CLIPImageEncoder.__name__,
@@ -36,7 +35,7 @@ def test_clip_batch():
         }
     })
     with f:
-        f.post(on='/test', inputs=(Document(blob=np.ones((3, 224, 224))) for _ in range(25)), on_done=validate_callback)
+        f.post(on='/test', inputs=(Document(blob=np.ones((224, 224, 3))) for _ in range(25)), on_done=validate_callback)
 
 
 def test_traversal_path():
@@ -48,7 +47,7 @@ def test_traversal_path():
         for path, count in [['r', 0], ['c', 0], ['cc', 2]]:
             assert len(DocumentArray(resp.data.docs).traverse_flat([path]).get_attributes('embedding')) == count
 
-    blob = np.ones((3, 224, 224))
+    blob = np.ones((224, 224, 3))
     docs = [Document(
         id='root1',
         blob=blob,
@@ -81,7 +80,7 @@ def test_traversal_path():
 def test_custom_processing():
     f = Flow().add(uses=CLIPImageEncoder)
     with f:
-        result1 = f.post(on='/test', inputs=[Document(blob=np.ones((3, 224, 224)))], return_results=True)
+        result1 = f.post(on='/test', inputs=[Document(blob=np.ones((224, 224, 3)))], return_results=True)
 
     f = Flow().add(uses={
         'jtype': CLIPImageEncoder.__name__,
@@ -91,7 +90,7 @@ def test_custom_processing():
     })
 
     with f:
-        result2 = f.post(on='/test', inputs=[Document(blob=np.ones((3, 224, 224)))], return_results=True)
+        result2 = f.post(on='/test', inputs=[Document(blob=np.ones((224, 224, 3)))], return_results=True)
 
     assert result1[0].docs[0].embedding is not None
     assert result2[0].docs[0].embedding is not None
@@ -102,10 +101,8 @@ def test_clip_data():
     docs = []
     for file in glob(os.path.join(cur_dir, 'data', '*')):
         pil_image = Image.open(file)
-        nd_image = np.array(pil_image)
-        prepared_nd_image = np.moveaxis((nd_image / 255), -1, 0)
-
-        docs.append(Document(id=file, blob=prepared_nd_image))
+        nd_image = np.array(pil_image) / 255
+        docs.append(Document(id=file, blob=nd_image))
 
     f = Flow().add(uses=CLIPImageEncoder)
 

@@ -1,11 +1,10 @@
 from typing import Optional, Iterable, Any, List
 
+import clip
 import numpy as np
 import torch
 from PIL import Image
 from jina import Executor, DocumentArray, requests
-
-import clip
 
 
 def _batch_generator(data: List[Any], batch_size: int):
@@ -77,13 +76,13 @@ class CLIPImageEncoder(Executor):
                 if self.use_default_preprocessing:
                     images = [
                         Image.fromarray(
-                            np.moveaxis(np.uint8(blob*255), 0, -1)
+                            np.uint8(blob * 255)
                         ) for blob in blob_batch
                     ]
                     tensors = [self.preprocess(img) for img in images]
                     tensor = torch.stack(tensors)
                 else:
-                    tensor = torch.from_numpy(np.array(blob_batch))
+                    tensor = torch.from_numpy(np.array([np.moveaxis(b, -1, 0) for b in blob_batch]))
                 tensor = tensor.to(self.device)
                 embedding_batch = self.model.encode_image(tensor)
                 numpy_embedding_batch = embedding_batch.cpu().numpy()
