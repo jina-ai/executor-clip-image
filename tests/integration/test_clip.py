@@ -8,7 +8,7 @@ import torch
 from PIL import Image
 from jina import Flow, Document, DocumentArray
 
-from encoder_clip import CLIPImageEncoder
+from jinahub.encoder.clip_image import CLIPImageEncoder
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 

@@ -1,7 +1,7 @@
 import setuptools
 
 setuptools.setup(
-    name='executor-clip',
+    name='jinahub-clip',
     version='2.0',
     author='Jina Dev Team',
     author_email='dev-team@jina.ai',
@@ -12,7 +12,7 @@ setuptools.setup(
         'Operating System :: OS Independent',
     ],
     py_modules=['jinahub.encoder.clip'],
-    packages=setuptools.find_packages(where='.', include=['encoder_clip.py', 'config.yml']),
-    install_requires=open('requirements.txt').readlines(),
+    packages=setuptools.find_packages(where='.', include=['jinahub/*']),
+    install_requires=open('jinahub/encoder/requirements.txt').readlines(),
     python_requires='>=3.7',
 )
