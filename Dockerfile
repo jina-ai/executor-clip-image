@@ -7,15 +7,13 @@ RUN apt-get -y update && apt-get install -y git
 COPY requirements.txt /requirements.txt
 RUN pip install -r requirements.txt
 
-# load default model during image creation TODO mount volume in cache directory
-RUN python -c "import clip;clip.load('ViT-B/32', 'cpu', True)"
-
 # setup the workspace
 COPY . /workspace
 WORKDIR /workspace
 
 # for testing the image
-FROM base
+# TODO: the following part is ignored in .dockerignore
+FROM base AS test
 RUN pip install -r tests/requirements.txt
 RUN pip install .
 RUN pytest -s -vv
