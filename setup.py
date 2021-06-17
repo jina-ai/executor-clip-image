@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name='jinahub-clip',
-    version='2.0',
+    version='1',
     author='Jina Dev Team',
     author_email='dev-team@jina.ai',
     description='Executors that encode images',
