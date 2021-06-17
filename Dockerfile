@@ -14,11 +14,5 @@ RUN python -c "import clip;clip.load('ViT-B/32', 'cpu', True)"
 COPY . /workspace
 WORKDIR /workspace
 
-# for testing the image
-FROM base
-RUN pip install -r tests/requirements.txt
-RUN pip install .
-RUN pytest -s -vv
-
 FROM base
 ENTRYPOINT ["jina", "executor", "--uses", "config.yml"]
