@@ -15,7 +15,6 @@ cur_dir = os.path.dirname(os.path.abspath(__file__))
 
 def test_clip_any_image_shape():
     def validate_callback(resp):
-        print(DocumentArray(resp.data.docs).get_attributes('embedding'), 'embedding')
         assert 1 == len(DocumentArray(resp.data.docs).get_attributes('embedding'))
 
     f = Flow().add(uses=CLIPImageEncoder)
