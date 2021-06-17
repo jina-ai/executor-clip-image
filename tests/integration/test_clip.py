@@ -11,7 +11,7 @@ from jinahub.encoder.clip_image import CLIPImageEncoder
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 
-
+list()
 def test_clip_any_image_shape():
     def validate_callback(resp):
         assert 1 == len(resp.docs.get_attributes('embedding'))

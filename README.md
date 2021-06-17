@@ -21,7 +21,7 @@ Document, Executor, and Flow are the three fundamental concepts in Jina.
 
 ## Usage
 
-### Via Jinahub
+### Via Jinahub (🚧W.I.P.)
 
 1. Clone the repo and build the Jinahub image
 
