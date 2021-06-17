@@ -1,8 +1,8 @@
 import setuptools
 
 setuptools.setup(
-    name='executor-clip',
-    version='2.0',
+    name='jinahub-clip',
+    version='1',
     author='Jina Dev Team',
     author_email='dev-team@jina.ai',
     description='Executors that encode images',
@@ -11,8 +11,8 @@ setuptools.setup(
         'Programming Language :: Python :: 3',
         'Operating System :: OS Independent',
     ],
-    py_modules=['encoder_clip'],
-    packages=setuptools.find_packages(where='.', include=['jinahub.*']),
+    py_modules=['jinahub.encoder.clip_image'],
+    package_dir={'jinahub.encoder': '.'},
     install_requires=open('requirements.txt').readlines(),
     python_requires='>=3.7',
 )
