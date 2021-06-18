@@ -17,8 +17,12 @@ class CLIPImageEncoder(Executor):
     Encode image into embeddings.
 
     :param model_name: use clip.available_models() to see all available models: ['RN50', 'RN101', 'RN50x4', 'ViT-B/32']
-    :param use_default_preprocessing: if true, the same preprocessing is used which got used during training
-    - prevents training-serving gap
+        - 'ViT-B/32': CLIP model based on the Vision Transformer architecture
+        - 'RN50': CLIP model based on ResNet-50
+        - 'RN50x4': CLIP model based on ResNet-50 which is scaled up 4x according to EfficientNet scaling rule
+        - 'RN101': CLIP model based on ResNet-101
+    :param use_default_preprocessing: if True, the same preprocessing is used which got used during training
+    - prevents training-serving gap.
     :param device: device to use for encoding ['cuda', 'cpu] - if not set, the device is detected automatically
     :param default_batch_size: fallback batch size in case there is not batch size sent in the request
     :param default_traversal_path: fallback traversal path in case there is not traversal path sent in the request
@@ -44,14 +48,17 @@ class CLIPImageEncoder(Executor):
         self.model, self.preprocess = clip.load(model_name, device, jit)
         self.use_default_preprocessing = use_default_preprocessing
 
-
     @requests
     def encode(self, docs: Optional[DocumentArray], parameters: dict, **kwargs):
         """
         Encode all docs with images and store the encodings in the embedding attribute of the docs.
-        :param docs: documents sent to the encoder
-        :param parameters: dictionary to define the traversal_path and the batch_size
-        :param kwargs: additional key word arguments
+        :param docs: documents sent to the encoder. The docs must have `blob` of the shape `Height x Width x 3`. By
+            default, the input `blob` must be an `ndarray` with `dtype=uint8`. The `Height` and `Width` can have
+            arbitrary values. When setting `use_default_preprocessing=False`, the input `blob` must have the size of
+            `224x224x3` with `dtype=float32`.
+        :param parameters: dictionary to define the `traversal_path` and the `batch_size`. For example,
+            `parameters={'traversal_path': 'r', 'batch_size': 10}` will override the `self.default_traversal_path` and
+            `self.default_batch_size`.
         """
         if docs:
             document_batches_generator = self._get_input_data(docs, parameters)

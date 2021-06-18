@@ -105,7 +105,7 @@ with f:
 
 ### Inputs 
 
-[Documents](https://github.com/jina-ai/jina/blob/master/.github/2.0/cookbooks/Document.md) with `blob` of the shape `Height x Width x 3`. By default, the input `blob` must be an `ndarray` with `dtype=uint8`. The `Height` and `Width` can have arbitary values. When setting `use_default_preprocessing=False`, the input `blob` must have the size of `224x224x3` with `dtype=float32`.
+[Documents](https://github.com/jina-ai/jina/blob/master/.github/2.0/cookbooks/Document.md) with `blob` of the shape `Height x Width x 3`. By default, the input `blob` must be an `ndarray` with `dtype=uint8`. The `Height` and `Width` can have arbitrary values. When setting `use_default_preprocessing=False`, the input `blob` must have the size of `224x224x3` with `dtype=float32`.
 
 ### Returns
 
