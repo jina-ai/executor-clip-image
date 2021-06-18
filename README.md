@@ -82,23 +82,20 @@ pods:
 
 
 ```python
-from jina import Flow, Document
-import numpy as np
-	
-f = Flow().add(
-        uses='jinahub+docker://ClipImageEncoder:v1',
-        volumes='/your_home_folder/.cache/clip:/root/.cache/clip')
-	
-def check_emb(resp):
-    for doc in resp.data.docs:
-        if doc.emb:
-            assert doc.emb.shape == (512,)
-	
+f = Flow().add(uses='jinahub+docker://ClipImageEncoder:v0',
+               volumes='/Users/nanwang/.cache/clip:/root/.cache/clip')
+
+
+def check_resp(resp):
+    for _doc in resp.data.docs:
+        doc = Document(_doc)
+        print(f'embedding shape: {doc.embedding.shape}')
+
+
 with f:
-	f.post(
-	    on='/foo', 
-	    inputs=Document(np.random.randint((0, 256, (128, 64, 3)), dtype=np.uint8)), 
-	    on_done=check_emb)
+    f.post(on='foo',
+           inputs=Document(blob=np.ones((800, 224, 3), dtype=np.uint8)),
+           on_done=check_resp)
 	    
 ```
 
