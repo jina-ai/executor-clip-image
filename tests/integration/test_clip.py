@@ -159,3 +159,12 @@ def test_clip_data():
             expected_embedding = model.encode_image(image).numpy()[0]
 
         np.testing.assert_almost_equal(actual_embedding, expected_embedding, 5)
+
+
+def test_custom_processing_arbitray_size():
+    f = Flow().add(uses=CLIPImageEncoder)
+    with f:
+        result = f.post(on='/test', inputs=[Document(blob=np.ones((800, 224, 3), dtype=np.uint8))],
+                         return_results=True)
+    print(f'{result[0].docs[0].embedding.dtype}')
+    assert result[0].docs[0].embedding is not None
