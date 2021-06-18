@@ -166,4 +166,5 @@ def test_custom_processing_arbitray_size():
     with f:
         result = f.post(on='/test', inputs=[Document(blob=np.ones((800, 224, 3), dtype=np.uint8))],
                          return_results=True)
+    print(f'{result[0].docs[0].embedding.dtype}')
     assert result[0].docs[0].embedding is not None
