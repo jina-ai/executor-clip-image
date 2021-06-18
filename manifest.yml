@@ -1,6 +1,6 @@
 manifest_version: 1
 name: CLIPImageEncoder
-alias: clip_image_encoder
+alias: ClipImageEncoder
 description: Encoder based on the Clip model proposed in https://cdn.openai.com/papers/Learning_Transferable_Visual_Models_From_Natural_Language_Supervision.pdf
 author: Jina AI Dev-Team (dev-team@jina.ai)
 url: https://jina.ai
