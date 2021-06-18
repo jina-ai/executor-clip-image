@@ -6,7 +6,8 @@ import clip
 import numpy as np
 import torch
 from PIL import Image
-from jina import Flow, Document, DocumentArray
+from jina import Flow, Document, DocumentArray, requests
+from jina.executors import BaseExecutor
 from jinahub.encoder.clip_image import CLIPImageEncoder
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
@@ -18,8 +19,18 @@ def test_clip_any_image_shape():
 
     f = Flow().add(uses=CLIPImageEncoder)
     with f:
-        f.post(on='/test', inputs=[Document(blob=np.ones((224, 224, 3)))], on_done=validate_callback)
-        f.post(on='/test', inputs=[Document(blob=np.ones((100, 100, 3)))], on_done=validate_callback)
+        f.post(on='/test', inputs=[Document(blob=np.ones((224, 224, 3), dtype=np.uint8))], on_done=validate_callback)
+        f.post(on='/test', inputs=[Document(blob=np.ones((100, 100, 3), dtype=np.uint8))], on_done=validate_callback)
+
+
+def test_fail():
+    class MockExecutor(BaseExecutor):
+        @requests
+        def encode(self, **kwargs):
+            pass
+
+    with Flow().add(uses=MockExecutor) as f:
+        f.post(on='/test', inputs=[Document(blob=np.ones((10,), dtype=np.uint8))])
 
 
 def test_clip_batch():
@@ -35,7 +46,8 @@ def test_clip_batch():
         }
     })
     with f:
-        f.post(on='/test', inputs=(Document(blob=np.ones((224, 224, 3))) for _ in range(25)), on_done=validate_callback)
+        f.post(on='/test', inputs=(Document(blob=np.ones((224, 224, 3), dtype=np.uint8)) for _ in range(25)),
+               on_done=validate_callback)
 
 
 def test_traversal_path():
@@ -47,7 +59,7 @@ def test_traversal_path():
         for path, count in [['r', 0], ['c', 0], ['cc', 2]]:
             assert len(DocumentArray(resp.data.docs).traverse_flat([path]).get_attributes('embedding')) == count
 
-    blob = np.ones((224, 224, 3))
+    blob = np.ones((224, 224, 3), dtype=np.uint8)
     docs = [Document(
         id='root1',
         blob=blob,
@@ -80,7 +92,8 @@ def test_traversal_path():
 def test_custom_processing():
     f = Flow().add(uses=CLIPImageEncoder)
     with f:
-        result1 = f.post(on='/test', inputs=[Document(blob=np.ones((224, 224, 3)))], return_results=True)
+        result1 = f.post(on='/test', inputs=[Document(blob=np.ones((224, 224, 3), dtype=np.uint8))],
+                         return_results=True)
 
     f = Flow().add(uses={
         'jtype': CLIPImageEncoder.__name__,
@@ -90,23 +103,28 @@ def test_custom_processing():
     })
 
     with f:
-        result2 = f.post(on='/test', inputs=[Document(blob=np.ones((224, 224, 3)))], return_results=True)
+        result2 = f.post(on='/test', inputs=[Document(blob=np.ones((224, 224, 3), dtype=np.float32))],
+                         return_results=True)
 
     assert result1[0].docs[0].embedding is not None
     assert result2[0].docs[0].embedding is not None
     np.testing.assert_array_compare(operator.__ne__, result1[0].docs[0].embedding, result2[0].docs[0].embedding)
 
 
+def test_no_documents():
+    with Flow().add(uses=CLIPImageEncoder) as f:
+        results = f.post(on='/test', inputs=[], return_results=True)
+        assert results[0].status.code == 0  # SUCCESS
+
+
 def test_clip_data():
     docs = []
     for file in glob(os.path.join(cur_dir, 'data', '*')):
         pil_image = Image.open(file)
-        nd_image = np.array(pil_image) / 255
+        nd_image = np.array(pil_image)
         docs.append(Document(id=file, blob=nd_image))
 
-    f = Flow().add(uses=CLIPImageEncoder)
-
-    with f:
+    with Flow().add(uses=CLIPImageEncoder) as f:
         results = f.post(on='/test', inputs=docs, return_results=True)
         os.path.join(cur_dir, 'data', 'banana2.png')
         image_name_to_ndarray = {}
@@ -141,10 +159,3 @@ def test_clip_data():
             expected_embedding = model.encode_image(image).numpy()[0]
 
         np.testing.assert_almost_equal(actual_embedding, expected_embedding, 5)
-
-
-def test_no_documents():
-    f = Flow().add(uses=CLIPImageEncoder)
-    with f:
-        results = f.post(on='/test', inputs=[], return_results=True)
-        assert results[0].status.code == 0  # SUCCESS

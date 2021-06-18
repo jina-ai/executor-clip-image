@@ -40,10 +40,9 @@ class CLIPImageEncoder(Executor):
         self.device = device
         self.default_batch_size = default_batch_size
         self.default_traversal_path = default_traversal_path
-        model, preprocess = clip.load(model_name, device, jit)
-        self.model = model
+        self.model, self.preprocess = clip.load(model_name, device, jit)
         self.use_default_preprocessing = use_default_preprocessing
-        self.preprocess = preprocess
+
 
     @requests
     def encode(self, docs: Optional[DocumentArray], parameters: dict, **kwargs):
@@ -74,11 +73,7 @@ class CLIPImageEncoder(Executor):
             for document_batch in document_batches_generator:
                 blob_batch = [d.blob for d in document_batch]
                 if self.use_default_preprocessing:
-                    images = [
-                        Image.fromarray(
-                            np.uint8(blob * 255)
-                        ) for blob in blob_batch
-                    ]
+                    images = [Image.fromarray(blob) for blob in blob_batch]
                     tensors = [self.preprocess(img) for img in images]
                     tensor = torch.stack(tensors)
                 else:

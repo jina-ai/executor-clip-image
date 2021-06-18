@@ -122,7 +122,7 @@ Document, Executor, and Flow are the three fundamental concepts in Jina.
 
 ### Inputs 
 
-An ndarray of the shape `Height x Width x Color Channel`, min=0, max=1. If `use_default_preprocessing` is `true`, input images can have any height and width. Otherwise, the input format has to be 224x224x3.
+An ndarray of the shape `Height x Width x Color Channel`. If `use_default_preprocessing` is `true`, input images can have any height and width and dtype uint8. Otherwise, the input format has to be 224x224x3 with dtype=float32.
 
 ### Outputs
 
