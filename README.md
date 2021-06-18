@@ -8,50 +8,51 @@ The **CLIP** model originally was proposed in [Learning Transferable Visual Mode
 
 
 
-## Prerequisite
+## Prerequisites
 
-Document, Executor, and Flow are the three fundamental concepts in Jina.
-
-- [**Document**](https://github.com/jina-ai/jina/blob/master/.github/2.0/cookbooks/Document.md) is the basic data type in Jina;
-- [**Executor**](https://github.com/jina-ai/jina/blob/master/.github/2.0/cookbooks/Executor.md) is how Jina processes Documents;
-- [**Flow**](https://github.com/jina-ai/jina/blob/master/.github/2.0/cookbooks/Flow.md) is how Jina streamlines and scales Executors.
-
-*Learn them all, nothing more, you are good to go.*
+None
 
 
-## Usage
+## Usages
 
-### Via Jinahub (🚧W.I.P.)
+### Via JinaHub (🚧W.I.P.)
 
-1. Clone the repo and build the Jinahub image
+Use the prebuilt images from JinaHub in your python codes, 
 
-	```shell
-	git clone https://github.com/jina-ai/executor-clip-image.git
-	cd executor-clip-image
-	jina hub push .
+```python
+from jina import Flow
+	
+f = Flow().add(
+        uses='jinahub+docker://ClipImageEncoder:v1',
+        volumes='/your_home_folder/.cache/clip:/root/.cache/clip')
+```
+
+or in the `.yml` config.
+	
+```yaml
+jtype: Flow
+pods:
+	- name: encoder
+	  uses: 'jinahub+docker://ClipImageEncoder:v1'
+	  volumes: '/your_home_folder/.cache/clip:/root/.cache/clip'
+```
+
+
+### Via Pypi
+
+1. Install the `jinahub-clip-image`
+
+	```bash
+	pip install git+https://github.com/jina-ai/executor-clip-image.git
 	```
 
-1. Use the image in your codes
+1. Use `jinahub-clip-image` in your code
 
 	```python
 	from jinahub.encoder.clip_image import ClipImageEncoder
-	from jina import Flow, Document
-	import numpy as np
+	from jina import Flow
 	
-	f = Flow().add(
-	        uses=jinahub+docker://xgdfljc:v1,
-	        volumes='/your_home_folder/.cache/clip:/root/.cache/clip')
-	
-	def check_emb(resp):
-	    for doc in resp.data.docs:
-	        if doc.emb:
-	            assert doc.emb.shape == (512,)
-	
-	with f:
-		f.post(
-		    on='/foo', 
-		    inputs=Document(np.random.random((224, 224, 3))), 
-		    on_done=check_emb)
+	f = Flow().add(uses=ClipImageEncoder)
 	```
 
 
@@ -68,68 +69,50 @@ Document, Executor, and Flow are the three fundamental concepts in Jina.
 1. Use `jinahub-clip-image` in your codes
 
 	```python
-	from jinahub.encoder.clip_image import ClipImageEncoder
-	from jina import Flow, Document
-	import numpy as np
+	from jina import Flow
 	
 	f = Flow().add(
 	        uses=docker://jinahub-clip-image:latest,
 	        volumes='/your_home_folder/.cache/clip:/root/.cache/clip')
-	
-	def check_emb(resp):
-	    for doc in resp.data.docs:
-	        if doc.emb:
-	            assert doc.emb.shape == (512,)
-	
-	with f:
-		f.post(
-		    on='/foo', 
-		    inputs=Document(np.random.random((224, 224, 3))), 
-		    on_done=check_emb)
 	```
-
-### Via Pypi
-
-1. Install the `jinahub-clip-image`
-
-	```bash
-	pip install git+https://github.com/jina-ai/executor-clip-image.git
-	```
-2. Use `jinahub-clip-image` in your code
-
-	```python
-	from jinahub.encoder.clip_image import ClipImageEncoder
-	from jina import Flow, Document
-	import numpy as np
 	
-	f = Flow().add(uses=ClipImageEncoder)
+
+
+## Example 
+
+
+```python
+from jina import Flow, Document
+import numpy as np
 	
-	def check_emb(resp):
-	    for doc in resp.data.docs:
-	        if doc.emb:
-	            assert doc.emb.shape == (512,)
+f = Flow().add(
+        uses='jinahub+docker://ClipImageEncoder:v1',
+        volumes='/your_home_folder/.cache/clip:/root/.cache/clip')
 	
-	with f:
-		f.post(
-		    on='/foo', 
-		    inputs=Document(np.random.random((224, 224, 3))), 
-		    on_done=check_emb)
-	```
+def check_emb(resp):
+    for doc in resp.data.docs:
+        if doc.emb:
+            assert doc.emb.shape == (512,)
+	
+with f:
+	f.post(
+	    on='/foo', 
+	    inputs=Document(np.random.randint((0, 256, (128, 64, 3)), dtype=np.uint8)), 
+	    on_done=check_emb)
+	    
+```
 
-
-
-## Parameters
 
 ### Inputs 
 
 An ndarray of the shape `Height x Width x Color Channel`. If `use_default_preprocessing` is `true`, input images can have any height and width and dtype uint8. Otherwise, the input format has to be 224x224x3 with dtype=float32.
 
-### Outputs
+### Returns
 
 Write the output ndarray of the shape `EmbeddingDimension` into `Document.embedding` field.
 
 
-__*We might need to generate docs automatically?*__
+
 
 
 ## Reference
