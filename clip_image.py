@@ -17,11 +17,12 @@ class CLIPImageEncoder(Executor):
     Encode image into embeddings.
 
     :param model_name: use clip.available_models() to see all available models: ['RN50', 'RN101', 'RN50x4', 'ViT-B/32']
+    :param use_default_preprocessing: if true, the same preprocessing is used which got used during training
+    - prevents training-serving gap
     :param device: device to use for encoding ['cuda', 'cpu] - if not set, the device is detected automatically
     :param default_batch_size: fallback batch size in case there is not batch size sent in the request
     :param default_traversal_path: fallback traversal path in case there is not traversal path sent in the request
     :param jit: Whether to load the optimized JIT model (default) or more hackable non-JIT model.
-    :param channel_axis: axis of the color channel
     """
 
     def __init__(
@@ -50,7 +51,7 @@ class CLIPImageEncoder(Executor):
         Encode all docs with images and store the encodings in the embedding attribute of the docs.
         :param docs: documents sent to the encoder
         :param parameters: dictionary to define the traversal_path and the batch_size
-        :param kwargs:
+        :param kwargs: additional key word arguments
         """
         if docs:
             document_batches_generator = self._get_input_data(docs, parameters)
