@@ -32,9 +32,9 @@ or in the `.yml` config.
 ```yaml
 jtype: Flow
 pods:
-	- name: encoder
-	  uses: 'jinahub+docker://ClipImageEncoder:v1'
-	  volumes: '/your_home_folder/.cache/clip:/root/.cache/clip'
+  - name: encoder
+    uses: 'jinahub+docker://ClipImageEncoder:v1'
+    volumes: '/your_home_folder/.cache/clip:/root/.cache/clip'
 ```
 
 
@@ -72,7 +72,7 @@ pods:
 	from jina import Flow
 	
 	f = Flow().add(
-	        uses=docker://jinahub-clip-image:latest,
+	        uses='docker://jinahub-clip-image:latest',
 	        volumes='/your_home_folder/.cache/clip:/root/.cache/clip')
 	```
 	
@@ -105,7 +105,7 @@ with f:
 
 ### Inputs 
 
-An ndarray of the shape `Height x Width x Color Channel`. If `use_default_preprocessing` is `true`, input images can have any height and width and dtype uint8. Otherwise, the input format has to be 224x224x3 with dtype=float32.
+[Documents](https://github.com/jina-ai/jina/blob/master/.github/2.0/cookbooks/Document.md) with `blob` of the shape `Height x Width x 3`. By default, the input `blob` must be an `ndarray` with `dtype=np.uint8`. The `Height` and `Width` can have arbitary values. When setting `use_default_preprocessing=False`, the input `blob` must have the size of `224x224x3` with `dtype=np.float32`.
 
 ### Returns
 
