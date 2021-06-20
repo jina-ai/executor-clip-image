@@ -23,7 +23,7 @@ Use the prebuilt images from JinaHub in your python codes,
 from jina import Flow
 	
 f = Flow().add(
-        uses='jinahub+docker://ClipImageEncoder:v1',
+        uses='jinahub+docker://ClipImageEncoder:v0',
         volumes='/your_home_folder/.cache/clip:/root/.cache/clip')
 ```
 
@@ -33,7 +33,7 @@ or in the `.yml` config.
 jtype: Flow
 pods:
   - name: encoder
-    uses: 'jinahub+docker://ClipImageEncoder:v1'
+    uses: 'jinahub+docker://ClipImageEncoder:v0'
     volumes: '/your_home_folder/.cache/clip:/root/.cache/clip'
 ```
 
