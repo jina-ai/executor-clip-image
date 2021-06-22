@@ -50,7 +50,7 @@ def test_clip_batch():
                on_done=validate_callback)
 
 
-def test_traversal_path():
+def test_traversal_paths():
     def validate_default_traversal(resp):
         for path, count in [['r', 0], ['c', 3], ['cc', 0]]:
             assert len(DocumentArray(resp.data.docs).traverse_flat([path]).get_attributes('embedding')) == count
@@ -79,14 +79,14 @@ def test_traversal_path():
     f = Flow().add(uses={
         'jtype': CLIPImageEncoder.__name__,
         'with': {
-            'default_traversal_path': ['c'],
+            'default_traversal_paths': ['c'],
             'model_name': 'ViT-B/32',
             'device': 'cpu'
         }
     })
     with f:
         f.post(on='/test', inputs=docs, on_done=validate_default_traversal)
-        f.post(on='/test', inputs=docs, parameters={'traversal_path': ['cc']}, on_done=validate_request_traversal)
+        f.post(on='/test', inputs=docs, parameters={'traversal_paths': ['cc']}, on_done=validate_request_traversal)
 
 
 def test_custom_processing():

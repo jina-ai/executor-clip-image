@@ -1,4 +1,4 @@
-from typing import Optional, Iterable, Any, List
+from typing import Optional, Iterable, Any, List, Union
 
 import clip
 import numpy as np
@@ -25,7 +25,7 @@ class CLIPImageEncoder(Executor):
     - prevents training-serving gap.
     :param device: device to use for encoding ['cuda', 'cpu] - if not set, the device is detected automatically
     :param default_batch_size: fallback batch size in case there is not batch size sent in the request
-    :param default_traversal_path: fallback traversal path in case there is not traversal path sent in the request
+    :param default_traversal_paths: fallback traversal path in case there is not traversal path sent in the request
     :param jit: Whether to load the optimized JIT model (default) or more hackable non-JIT model.
     """
 
@@ -35,7 +35,7 @@ class CLIPImageEncoder(Executor):
             use_default_preprocessing: bool = True,
             device: Optional[str] = None,
             default_batch_size: int = 32,
-            default_traversal_path: str = 'r',
+            default_traversal_paths: Union[str, List[str]] = 'r',
             jit: bool = True,
             *args, **kwargs
     ):
@@ -44,7 +44,7 @@ class CLIPImageEncoder(Executor):
             device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.device = device
         self.default_batch_size = default_batch_size
-        self.default_traversal_path = default_traversal_path
+        self.default_traversal_paths = default_traversal_paths
         self.model, self.preprocess = clip.load(model_name, device, jit)
         self.use_default_preprocessing = use_default_preprocessing
 
@@ -56,8 +56,8 @@ class CLIPImageEncoder(Executor):
             default, the input `blob` must be an `ndarray` with `dtype=uint8`. The `Height` and `Width` can have
             arbitrary values. When setting `use_default_preprocessing=False`, the input `blob` must have the size of
             `224x224x3` with `dtype=float32`.
-        :param parameters: dictionary to define the `traversal_path` and the `batch_size`. For example,
-            `parameters={'traversal_path': 'r', 'batch_size': 10}` will override the `self.default_traversal_path` and
+        :param parameters: dictionary to define the `traversal_paths` and the `batch_size`. For example,
+            `parameters={'traversal_paths': 'r', 'batch_size': 10}` will override the `self.default_traversal_paths` and
             `self.default_batch_size`.
         """
         if docs:
@@ -65,11 +65,11 @@ class CLIPImageEncoder(Executor):
             self._create_embeddings(document_batches_generator)
 
     def _get_input_data(self, docs: DocumentArray, parameters: dict):
-        traversal_path = parameters.get('traversal_path', self.default_traversal_path)
+        trav_paths = parameters.get('traversal_paths', self.default_traversal_paths)
         batch_size = parameters.get('batch_size', self.default_batch_size)
 
         # traverse thought all documents which have to be processed
-        flat_docs = docs.traverse_flat(traversal_path)
+        flat_docs = docs.traverse_flat(trav_paths)
 
         # filter out documents without images
         filtered_docs = [doc for doc in flat_docs if doc.blob is not None]
