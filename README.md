@@ -1,10 +1,10 @@
-# ClipImageEncoder
+# CLIPImageEncoder
 
- **ClipImageEncoder** is a class that wraps the image embedding functionality from the **CLIP** model.
+ **CLIPImageEncoder** is a class that wraps the image embedding functionality from the **CLIP** model.
 
 The **CLIP** model originally was proposed in [Learning Transferable Visual Models From Natural Language Supervision](https://cdn.openai.com/papers/Learning_Transferable_Visual_Models_From_Natural_Language_Supervision.pdf).
 
-`ClipImageEncoder` encode images stored in the blob attribute of the [**Document**](https://github.com/jina-ai/jina/blob/master/.github/2.0/cookbooks/Document.md) and saves the encoding in the embedding attribute.
+`CLIPImageEncoder` encode images stored in the blob attribute of the [**Document**](https://github.com/jina-ai/jina/blob/master/.github/2.0/cookbooks/Document.md) and saves the encoding in the embedding attribute.
 
 
 
@@ -23,7 +23,7 @@ Use the prebuilt images from JinaHub in your python codes,
 from jina import Flow
 	
 f = Flow().add(
-        uses='jinahub+docker://ClipImageEncoder:v1',
+        uses='jinahub+docker://CLIPImageEncoder:v1',
         volumes='/your_home_folder/.cache/clip:/root/.cache/clip')
 ```
 
@@ -33,7 +33,7 @@ or in the `.yml` config.
 jtype: Flow
 pods:
   - name: encoder
-    uses: 'jinahub+docker://ClipImageEncoder:v1'
+    uses: 'jinahub+docker://CLIPImageEncoder:v1'
     volumes: '/your_home_folder/.cache/clip:/root/.cache/clip'
 ```
 
@@ -49,10 +49,10 @@ pods:
 1. Use `jinahub-clip-image` in your code
 
 	```python
-	from jinahub.encoder.clip_image import ClipImageEncoder
+	from jinahub.encoder.clip_image import CLIPImageEncoder
 	from jina import Flow
 	
-	f = Flow().add(uses=ClipImageEncoder)
+	f = Flow().add(uses=CLIPImageEncoder)
 	```
 
 
@@ -82,7 +82,7 @@ pods:
 
 
 ```python
-f = Flow().add(uses='jinahub+docker://ClipImageEncoder:v0',
+f = Flow().add(uses='jinahub+docker://CLIPImageEncoder:v0',
                volumes='/Users/nanwang/.cache/clip:/root/.cache/clip')
 
 
