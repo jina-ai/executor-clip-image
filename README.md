@@ -15,7 +15,7 @@ None
 
 ## Usages
 
-### Via JinaHub (🚧W.I.P.)
+### Via JinaHub
 
 Use the prebuilt images from JinaHub in your python codes, 
 
