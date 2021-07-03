@@ -14,13 +14,15 @@ cur_dir = os.path.dirname(os.path.abspath(__file__))
 
 
 def test_clip_any_image_shape():
-    def validate_callback(resp):
-        assert 1 == len(resp.docs.get_attributes('embedding'))
-
     f = Flow().add(uses=CLIPImageEncoder)
     with f:
-        f.post(on='/test', inputs=[Document(blob=np.ones((224, 224, 3), dtype=np.uint8))], on_done=validate_callback)
-        f.post(on='/test', inputs=[Document(blob=np.ones((100, 100, 3), dtype=np.uint8))], on_done=validate_callback)
+        results = f.post(
+            on='/test', inputs=[Document(blob=np.ones((224, 224, 3), dtype=np.uint8))], return_results=True)
+        assert len(results[0].docs.get_attributes('embedding')) == 1
+
+        results = f.post(
+            on='/test', inputs=[Document(blob=np.ones((100, 100, 3), dtype=np.uint8))], return_results=True)
+        assert len(results[0].docs.get_attributes('embedding')) == 1
 
 
 def test_fail():
@@ -34,9 +36,6 @@ def test_fail():
 
 
 def test_clip_batch():
-    def validate_callback(resp):
-        assert 25 == len(resp.docs.get_attributes('embedding'))
-
     f = Flow().add(uses={
         'jtype': CLIPImageEncoder.__name__,
         'with': {
@@ -46,18 +45,14 @@ def test_clip_batch():
         }
     })
     with f:
-        f.post(on='/test', inputs=(Document(blob=np.ones((224, 224, 3), dtype=np.uint8)) for _ in range(25)),
-               on_done=validate_callback)
+        results = f.post(
+            on='/test',
+            inputs=(Document(blob=np.ones((224, 224, 3), dtype=np.uint8)) for _ in range(25)),
+            return_results=True)
+        assert len(results[0].docs.get_attributes('embedding')) == 25
 
 
 def test_traversal_paths():
-    def validate_default_traversal(resp):
-        for path, count in [['r', 0], ['c', 3], ['cc', 0]]:
-            assert len(DocumentArray(resp.data.docs).traverse_flat([path]).get_attributes('embedding')) == count
-
-    def validate_request_traversal(resp):
-        for path, count in [['r', 0], ['c', 0], ['cc', 2]]:
-            assert len(DocumentArray(resp.data.docs).traverse_flat([path]).get_attributes('embedding')) == count
 
     blob = np.ones((224, 224, 3), dtype=np.uint8)
     docs = [Document(
@@ -85,8 +80,13 @@ def test_traversal_paths():
         }
     })
     with f:
-        f.post(on='/test', inputs=docs, on_done=validate_default_traversal)
-        f.post(on='/test', inputs=docs, parameters={'traversal_paths': ['cc']}, on_done=validate_request_traversal)
+        results = f.post(on='/test', inputs=docs, return_results=True)
+        for path, count in [['r', 0], ['c', 3], ['cc', 0]]:
+            assert len(DocumentArray(results[0].docs).traverse_flat([path]).get_attributes('embedding')) == count
+
+        results = f.post(on='/test', inputs=docs, parameters={'traversal_paths': ['cc']}, return_results=True)
+        for path, count in [['r', 0], ['c', 0], ['cc', 2]]:
+            assert len(DocumentArray(results[0].docs).traverse_flat([path]).get_attributes('embedding')) == count
 
 
 def test_custom_processing():
