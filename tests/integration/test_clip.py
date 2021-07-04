@@ -25,16 +25,6 @@ def test_clip_any_image_shape():
         assert len(results[0].docs.get_attributes('embedding')) == 1
 
 
-def test_fail():
-    class MockExecutor(BaseExecutor):
-        @requests
-        def encode(self, **kwargs):
-            pass
-
-    with Flow().add(uses=MockExecutor) as f:
-        f.post(on='/test', inputs=[Document(blob=np.ones((10,), dtype=np.uint8))])
-
-
 def test_clip_batch():
     f = Flow().add(uses={
         'jtype': CLIPImageEncoder.__name__,
