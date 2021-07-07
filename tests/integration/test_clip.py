@@ -24,6 +24,12 @@ def test_clip_any_image_shape():
             on='/test', inputs=[Document(blob=np.ones((100, 100, 3), dtype=np.uint8))], return_results=True)
         assert len(results[0].docs.get_attributes('embedding')) == 1
 
+def test_clip_int64():
+    f = Flow().add(uses=CLIPImageEncoder)
+    with f:
+        results = f.post(
+            on='/test', inputs=[Document(blob=np.ones((224, 224, 3), dtype=np.int64))], return_results=True)
+        assert len(results[0].docs.get_attributes('embedding')) == 1
 
 def test_clip_batch():
     f = Flow().add(uses={
