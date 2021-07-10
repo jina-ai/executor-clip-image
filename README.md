@@ -72,8 +72,8 @@ pods:
 	from jina import Flow
 	
 	f = Flow().add(
-	        uses='docker://jinahub-clip-image:latest',
-	        volumes='/your_home_folder/.cache/clip:/root/.cache/clip')
+	        uses='jinahub+docker://CLIPImageEncoder',
+	        volumes=['/your_home_folder/.cache/clip:/root/.cache/clip'])
 	```
 	
 
