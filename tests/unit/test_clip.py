@@ -1,3 +1,4 @@
+import copy
 import operator
 
 import numpy as np
@@ -38,15 +39,17 @@ def test_traversal_paths():
         Document(id='chunk112', blob=blob),
     ]
 
+    original_docs = copy.deepcopy(docs)
     encoder = CLIPImageEncoder(default_traversal_paths=['c'], model_name='ViT-B/32', device='cpu')
     encoder.encode(docs, parameters={})
     for path, count in [['r', 0], ['c', 3], ['cc', 0]]:
         assert len(docs.traverse_flat([path]).get_attributes('embedding')) == count
 
+
     encoder = CLIPImageEncoder(default_traversal_paths=['cc'])
-    encoder.encode(docs, parameters={})
+    encoder.encode(original_docs, parameters={})
     for path, count in [['r', 0], ['c', 0], ['cc', 2]]:
-        assert len(docs.traverse_flat([path]).get_attributes('embedding')) == count
+        assert len(original_docs.traverse_flat([path]).get_attributes('embedding')) == count
 
 
 def test_custom_processing():
