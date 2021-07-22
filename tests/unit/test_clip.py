@@ -72,6 +72,10 @@ def test_no_documents():
     encoder.encode(docs=docs, parameters={})
     assert len(docs) == 0  # SUCCESS
 
+def test_none_docs():
+    encoder = CLIPImageEncoder()
+    docs = None
+    encoder.encode(docs=docs, parameters={})
 
 def test_clip():
     ex = BaseExecutor.load_config('../../config.yml')
