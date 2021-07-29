@@ -1,3 +1,5 @@
+# Moved to https://github.com/jina-ai/executors/tree/main/jinahub/encoders/image/CLIPImageEncoder
+
 # CLIPImageEncoder
 
  **CLIPImageEncoder** is a class that wraps the image embedding functionality from the **CLIP** model.
